@@ -7,7 +7,7 @@
     require_once "src/Cuisine.php";
     require_once "src/Restaurant.php";
 
-    $server = 'mysql:host=localhost;dbname=cuisine_restaurant';
+    $server = 'mysql:host=localhost;dbname=cuisine_restaurant_test';
     $username = 'root';
     $password = 'root';
     $DB = new PDO($server, $username, $password);
@@ -17,7 +17,7 @@
         protected function tearDown()
         {
             Cuisine::deleteAll();
-            //Restaurant::deleteAll();
+            Restaurant::deleteAll();
         }
 
         function test_getName()
@@ -71,19 +71,19 @@
 
             $test_cuisine_id = $test_cuisine->getId();
 
-            $restaurant_name = "Mario's";
+            $restaurant_name = "Marios";
             $test_restaurant = new Restaurant($restaurant_name, $test_cuisine_id, $id);
             $test_restaurant->save();
 
-            $restaurant_name2 = "Luigi's";
-            $test_restaurant2 = new Restaurant($restauarant_name2, $test_cuisine_id, $id);
+            $restaurant_name2 = "Luigis";
+            $test_restaurant2 = new Restaurant($restaurant_name2, $test_cuisine_id, $id);
             $test_restaurant2->save();
 
             //Act
             $result = $test_cuisine->getRestaurants();
 
             //Assert
-            $this->assertEquals([$test_cuisine, $test_cuisine2], $result);
+            $this->assertEquals([$test_restaurant, $test_restaurant2], $result);
         }
 
         function test_getAll()
@@ -120,6 +120,66 @@
             //Assert
             $this->assertEquals([], $result);
         }
+
+        function testUpdate()
+        {
+            //Arrange
+            $name = "Italian";
+            $id = null;
+            $test_cuisine = new Cuisine($name, $id);
+            $test_cuisine->save();
+
+            $new_name = "Mexican";
+
+            //Act
+            $test_cuisine->update($new_name);
+
+            //Assert
+            $this->assertEquals("Mexican", $test_cuisine->getName());
+        }
+
+        function testDelete()
+        {
+            //Arrange
+            $name = "Italian";
+            $id = null;
+            $test_cuisine = new Cuisine($name, $id);
+            $test_cuisine->save();
+
+            $name2 = "Thai";
+            $test_cuisine2 = new Cuisine($name2, $id);
+            $test_cuisine2->save();
+
+
+            //Act
+            $test_cuisine->delete();
+
+            //Assert
+            $this->assertEquals([$test_cuisine2], Cuisine::getAll());
+        }
+
+        function testDeleteCuisineRestaurants()
+        {
+            //Arrange
+            $name = "Thai";
+            $id = null;
+            $test_cuisine = new Cuisine($name, $id);
+            $test_cuisine->save();
+
+            $restaurant_name = "Thai place";
+            $cuisine_id = $test_cuisine->getId();
+            $test_restaurant = new Restaurant($restaurant_name, $cuisine_id, $id);
+            $test_restaurant->save();
+
+
+            //Act
+            $test_cuisine->delete();
+
+            //Assert
+            $this->assertEquals([], Restaurant::getAll());
+        }
+
+
     }
 
  ?>
