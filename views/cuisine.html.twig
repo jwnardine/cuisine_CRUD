@@ -1,0 +1,32 @@
+<html>
+<head>
+    <title>To Do List</title>
+</head>
+<body>
+    <h1>{{ cuisine.getName }}</h1>
+
+    {% if restaurants is not empty %}
+        <p>Here are the restaurants:</p>
+        <ul>
+            {% for restaurant in restaurants %}
+                <li>{{ restaurant.getDescription }} </li>
+
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <form action='/delete_restaurants' method='post'>
+        <button type='submit'>Delete Restaurant List</button>
+    </form>
+    <h4>Add a restaurant</h4>
+
+    <form action='/restaurants' method='post'>
+        <input id="cuisine_id" name="cuisine_id" type="hidden" value="{{ cuisine.getId() }}">
+        <label for='name'>Restaurant Description</label>
+        <input id='name' name='name' type='text'>
+
+        <button type='submit'>Add restaurant</button>
+    </form>
+
+    <p><a href='/'>Home</a></p>
+</body>
+</html>
